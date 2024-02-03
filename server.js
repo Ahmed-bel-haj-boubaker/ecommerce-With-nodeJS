@@ -22,6 +22,11 @@ if (process.env.NODE_ENV === "development"){
     console.log(`mode : ${process.env.NODE_ENV}`)
 }
 
+//Globale error handler middleware that is provided by Express
+app.use((err,req,res,next)=>{
+  res.status(404).json({err});
+})
+
 //Routes
 app.use('/api/category',categoryRoute);
 
