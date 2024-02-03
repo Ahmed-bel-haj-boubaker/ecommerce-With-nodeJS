@@ -2,7 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const dbConnection = require("../ecommerce/config/database");
-const categoryRoute = require("./routes/categoryRoute")
+const categoryRoute = require("./routes/categoryRoute");
+const ApiError = require('../ecommerce/utils/apiError');
 dotenv.config({ path: "config.env" });
 
 
@@ -23,13 +24,30 @@ if (process.env.NODE_ENV === "development"){
 }
 
 //Globale error handler middleware that is provided by Express
-app.use((err,req,res,next)=>{
-  res.status(404).json({err});
-})
+
 
 //Routes
 app.use('/api/category',categoryRoute);
+app.all('*',(req,res,next)=>{
+  // Create Error and send it to error handling middleware 
+  // const err = new Error(`Can't find this Route: ${req.originalUrl}`);
+  // next(err.message)
+  //OR Create a new error custom class
+  next(new ApiError(`Can't find this Route: ${req.originalUrl}`,400));  
 
+})
+
+app.use((err,req,res,next)=>{
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+
+  res.status(err.statusCode).json({
+   status : err.status,
+   error : err,
+   message : err.message,
+   stack : err.stack  // l emplacement de l erreur
+  });
+})
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
