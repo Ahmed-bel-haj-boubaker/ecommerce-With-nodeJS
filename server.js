@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const dbConnection = require("../ecommerce/config/database");
 const categoryRoute = require("./routes/categoryRoute");
 const ApiError = require('../ecommerce/utils/apiError');
+const globalError = require("./middlewares/errorMiddlewares");
 dotenv.config({ path: "config.env" });
 
 
@@ -37,17 +38,7 @@ app.all('*',(req,res,next)=>{
 
 })
 
-app.use((err,req,res,next)=>{
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  res.status(err.statusCode).json({
-   status : err.status,
-   error : err,
-   message : err.message,
-   stack : err.stack  // l emplacement de l erreur
-  });
-})
+app.use(globalError);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
