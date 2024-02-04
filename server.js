@@ -41,8 +41,17 @@ app.all('*',(req,res,next)=>{
 app.use(globalError);
 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT} `);
+});
+
+// Handle Error rejection outside express
+process.on('unhandledRejection',(err)=>{
+  console.error(`Unhandled Rejection Errors : ${err.name} | ${err.message}`);
+  server.close(()=>{
+    console.error(`Shutting down... `);
+    process.exit(1);
+  })
 });
 
 
