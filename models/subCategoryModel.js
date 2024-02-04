@@ -8,6 +8,7 @@ const subCategorySchema = new mongoose.Schema({
         unique:[true,"SubCategory must be unique"],
         minlength:[3,'Too short subCategory name'],
         maxlength:[32,'Too long subCategory name']
+        
     },
     slug:{
         type : String,
