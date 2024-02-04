@@ -1,12 +1,22 @@
 const express = require("express");
-const { addCategories,getCategory, getCategoryById,updateCategory,deleteCategory } = require("../services/categoryService");
+const {
+  addCategories,
+  getCategory,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
+} = require("../services/categoryService");
+const {
+  getCategoryByIDValidator,
+} = require("../utils/validator/categoryValidator");
 
 const router = express.Router();
 
-
-
-router.get('/',getCategory).post('/',addCategories);
-router.get('/:id',getCategoryById).put('/:id',updateCategory).delete('/:id',deleteCategory);
+router.route("/").get(getCategory).post(addCategories);
+router
+  .route("/:id")
+  .get(getCategoryByIDValidator, getCategoryById)
+  .put(updateCategory)
+  .delete(deleteCategory);
 
 module.exports = router;
-
