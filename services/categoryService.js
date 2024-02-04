@@ -1,6 +1,6 @@
-const CategoryModel = require("../models/categoryModel");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
+const CategoryModel = require("../models/categoryModel");
 const ApiError = require("../utils/apiError");
 
 // Promise : In asynchronous programming, promises represent the eventual result (completion or failure) of an asynchronous operation
@@ -20,7 +20,7 @@ const ApiError = require("../utils/apiError");
 exports.addCategories = asyncHandler(async (req, res) => {
   //asyncHandler:  middleware is often created to handle asynchronous operations within a route handler
   // ensuring that any errors that occur during the asynchronous operation are properly caught and forwarded to the error-handling middleware.
-  const name = req.body.name;
+  const {name} = req.body;
   const category = await CategoryModel.create({ name, slug: slugify(name) }); // Generate a 'slug' based on the 'name' using slugify
   res.status(201).json({ data: category });
 });
