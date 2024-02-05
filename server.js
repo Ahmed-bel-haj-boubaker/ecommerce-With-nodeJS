@@ -39,7 +39,7 @@ app.all('*',(req,res,next)=>{
   //OR Create a new error custom class
   next(new ApiError(`Can't find this Route: ${req.originalUrl}`,400));  
 
-})
+});
 
 app.use(globalError);
 

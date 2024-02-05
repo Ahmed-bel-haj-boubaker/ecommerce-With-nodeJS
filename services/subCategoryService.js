@@ -3,7 +3,11 @@ const asyncHandler = require("express-async-handler");
 const SubCategoryModel = require('../models/subCategoryModel');
 const ApiError = require("../utils/apiError");
 
-
+exports.setCategoryIdToBody = (req,res,next)=>{
+// nested Route
+if(!req.body.category) req.body.category = req.params.categoryId; // if there is no category in the body then get the category from the params
+next();
+};
 exports.addSubCategories = asyncHandler(async (req, res) => {
    
     const {name,category} = req.body;
