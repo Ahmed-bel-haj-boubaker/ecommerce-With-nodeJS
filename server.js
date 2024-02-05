@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "development"){
 
 //Routes
 app.use('/api/category',categoryRoute);
-app.use('/api/subCategory',subCategoryRoute);
+app.use('/subCategory',subCategoryRoute);
 app.all('*',(req,res,next)=>{
   // Create Error and send it to error handling middleware 
   // const err = new Error(`Can't find this Route: ${req.originalUrl}`);

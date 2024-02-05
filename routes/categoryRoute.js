@@ -10,7 +10,11 @@ const {
   getCategoryByIDValidator, updateCategoryValidator, deleteCategoryValidator, createCategoryValidator,
 } = require("../utils/validator/categoryValidator");
 
+const subCategoryRoute = require("./subCategoryRoute");
+
 const router = express.Router();
+
+router.use('/:categoryId/subCategory', subCategoryRoute);// if the req is like that /:categoryId/subCategory ==> get me to subCategoryRoute
 
 router.route("/").get(getCategory).post(createCategoryValidator,addCategories);
 router
