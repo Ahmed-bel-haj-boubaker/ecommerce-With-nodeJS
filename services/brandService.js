@@ -17,7 +17,7 @@ const ApiError = require("../utils/apiError");
 
 //asyncHandler catch the error from the async await function and give it to the express error handler
 
-exports.addCategories = asyncHandler(async (req, res) => {
+exports.addBrands = asyncHandler(async (req, res) => {
   //asyncHandler:  middleware is often created to handle asynchronous operations within a route handler
   // ensuring that any errors that occur during the asynchronous operation are properly caught and forwarded to the error-handling middleware.
   const {name} = req.body;
