@@ -7,6 +7,7 @@ const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddlewares");
 const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandRoute = require("./routes/brandRoute");
+const productRoute = require("./routes/productRoute");
 
 dotenv.config({ path: "config.env" });
 
@@ -34,6 +35,7 @@ if (process.env.NODE_ENV === "development"){
 app.use('/api/category',categoryRoute);
 app.use('/subCategory',subCategoryRoute);
 app.use('/api/brands',brandRoute);
+app.use('/api/product',productRoute);
 app.all('*',(req,res,next)=>{
   // Create Error and send it to error handling middleware 
   // const err = new Error(`Can't find this Route: ${req.originalUrl}`);

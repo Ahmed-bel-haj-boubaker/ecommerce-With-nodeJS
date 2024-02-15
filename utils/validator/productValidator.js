@@ -75,32 +75,52 @@ exports.createProductValidator = [
     .optional()
     .isMongoId()
     .withMessage('Invalid ID formate')
-    .custom((subcategoriesIds) =>
+    .custom((subcategoriesIds,{req}) =>
       SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
         (result) => {
-          if (result.length < 1 || result.length !== subcategoriesIds.length) {
+          const res = req.body.subCategory;
+          console.log(res)
+          console.log(subcategoriesIds.length)
+          if (res.length < 1 || res.length !== subcategoriesIds.length) {
             return Promise.reject(new Error(`Invalid subcategories Ids`));
+     
           }
         }
       )
     )
     .custom((val, { req }) =>
-      SubCategory.find({ category: req.body.category }).then(
-        (subcategories) => {
-          const subCategoriesIdsInDB = [];
-          subcategories.forEach((subCategory) => {
-            subCategoriesIdsInDB.push(subCategory._id.toString());
-          });
-          // check if subcategories ids in db include subcategories in req.body (true)
-          const checker = (target, arr) => target.every((v) => arr.includes(v));
-          if (!checker(val, subCategoriesIdsInDB)) {
-            return Promise.reject(
-              new Error(`subcategories not belong to category`)
-            );
-          }
+    SubCategory.find({ category : req.body.category }).then(
+      (subcategories) => {
+    
+
+        // Check if subcategories are found
+        if (subcategories.length === 0) {
+          return Promise.reject(
+            new Error(`No subcategories found for the specified category`)
+          );
         }
-      )
-    ),
+
+        const subCategoriesIdsInDB = subcategories.map(subCategory => subCategory._id).toString();
+        console.log(subCategoriesIdsInDB,"3")
+
+        // Check if subcategories IDs in DB include subcategories in req.body
+        const checker = (target, arr) => {
+          console.log(target,"55");
+          console.log(arr,"66") // Logging the 'target' array
+          console.log(Array.isArray(target) && target.every((v) => arr.includes(v)),"77")
+          return Array.isArray(target) && target.every((v) => arr.includes(v));
+      };
+        console.log(val,"4")
+        if (!checker(val, subCategoriesIdsInDB)) {
+          return Promise.reject(
+            new Error(`Subcategories do not belong to the specified category`)
+          );
+        }
+      }
+    )
+  ),
+  
+  
 
   check('brand').optional().isMongoId().withMessage('Invalid ID formate'),
   check('ratingsAverage')
