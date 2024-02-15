@@ -108,7 +108,7 @@ exports.createProductValidator = [
           console.log(target,"55");
           console.log(arr,"66") // Logging the 'target' array
           console.log(Array.isArray(target) && target.every((v) => arr.includes(v)),"77")
-          return Array.isArray(target) && target.every((v) => arr.includes(v));
+          return target.every((v)=>subCategoriesIdsInDB.includes(v));
       };
         console.log(val,"4")
         if (!checker(val, subCategoriesIdsInDB)) {
