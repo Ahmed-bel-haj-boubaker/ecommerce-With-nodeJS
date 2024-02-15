@@ -25,7 +25,7 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
     console.log(filterObject);
     console.log(req.params.categoryId)
 
-  const SubCategory = await SubCategoryModel.find(filterObject);//.populate({path:'category',select:'name -_id'}); to return the subcategory with there only the name of  category and its not important to use this function beacause like in this example i has two queries and it slow the time of response of the server when i have many users ( many requests)
+  const SubCategory = await SubCategoryModel.find(filterObject);//.populate({path:'category',select:'name -_id'}); to return the subcategory with there only the name of  category and its not important to use this function beacause like in this example i has two queries and it grow  the time of response of the server when i have many users ( many requests)
 
   res.status(200).json({ results: SubCategory.length, data: SubCategory });
 });

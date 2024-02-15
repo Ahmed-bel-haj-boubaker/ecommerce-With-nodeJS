@@ -5,7 +5,7 @@ const ApiError = require("../utils/apiError");
 
 
 
-exports.addProduct = asyncHandler(async (req, res) => {
+exports.addProduct = asyncHandler(async (req, res,next) => {
 
   req.body.slug = slugify(req.body.title)
   const Product = await ProductModel.create(req.body);
@@ -13,11 +13,26 @@ exports.addProduct = asyncHandler(async (req, res) => {
 });
 
 
-exports.getProduct = asyncHandler(async (req, res) => {
+exports.getProduct = asyncHandler(async (req, res,next) => {
+  // 1  Filtring
+  const queryStringObj={...req.query};
+  
+  const excludesFields = ['page','sort','limit','fields'];
+
+  excludesFields.forEach(field=>delete queryStringObj[field]);
+
+  console.log(req.query)
+  console.log(queryStringObj)
+  // 2 pagination  
   const page = req.query.page * 1 || 1; 
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
-  const Product = await ProductModel.find({}).skip(skip).limit(limit);
+
+  // Build Query 
+ const mongooseQuery = ProductModel.find(queryStringObj).skip(skip).limit(limit);
+
+  // execute Query 
+  const Product = await mongooseQuery;
   res.status(200).json({ results: Product.length, page, data: Product });
 });
 
