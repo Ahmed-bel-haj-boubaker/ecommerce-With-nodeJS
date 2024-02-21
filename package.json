@@ -6,6 +6,7 @@
   "scripts": {
     "start:dev": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && node server.js",
+    "clean": "rm -rf dist",
     "build": "npm run clean && npm run compile && npm run bundle"
   },
   "keywords": [],
