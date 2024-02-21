@@ -7,7 +7,9 @@
     "start:dev": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && node server.js",
     "clean": "rm -rf dist",
-    "build": "npm run clean && npm run compile"
+  "compile": "babel src -d dist",
+  "bundle": "webpack --config webpack.config.js",
+  "build": "npm run clean && npm run compile && npm run bundle"
   },
   "keywords": [],
   "author": "",
