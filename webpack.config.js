@@ -18,7 +18,9 @@ module.exports = {
       "url": require.resolve("url/"),
       "zlib": require.resolve("browserify-zlib"),
       "os": require.resolve("os-browserify/browser"),
-      "assert": require.resolve("assert/")
+      "assert": require.resolve("assert/"),
+      "async_hooks": require.resolve("async_hooks"),
+
 
     }
   },
