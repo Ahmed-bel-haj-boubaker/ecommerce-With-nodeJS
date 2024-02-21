@@ -1,19 +1,25 @@
 const path = require('path');
 
 module.exports = {
-  entry: path.resolve(__dirname, 'server.js'), // Entry point of your application
+  entry: './server.js', // Entry point of your application
+  mode:'development',
   output: {
     path: path.resolve(__dirname, 'dist'), // Output directory
-    filename: 'bundle.js' // Output bundle filename
+    filename: 'main.js' // Output bundle filename
   },
   resolve: {
     fallback: {
-      fs: false, // or require.resolve("stream-browserify")
-      http: false, // or require.resolve("stream-http")
-      net: false, // or require.resolve("net-browserify")
-      url: false, // or require.resolve("url/")
-      buffer: false // or require.resolve("buffer/")
-      // Add other core modules here as needed
+      "fs": false,
+      "crypto": require.resolve("crypto-browserify"),
+      "http": require.resolve("stream-http"),
+      "net": false,
+      "querystring": require.resolve("querystring-es3"),
+      "stream": require.resolve("stream-browserify"),
+      "url": require.resolve("url/"),
+      "zlib": require.resolve("browserify-zlib"),
+      "os": require.resolve("os-browserify/browser"),
+      "assert": require.resolve("assert/")
+
     }
   },
   module: {
