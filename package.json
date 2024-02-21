@@ -7,9 +7,9 @@
     "start:dev": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && node server.js",
     "clean": "rm -rf dist",
-  "compile": "babel src -d dist",
-  "bundle": "webpack --config webpack.config.js",
-  "build": "npm run clean && npm run compile && npm run bundle"
+    "compile": "./node_modules/.bin/babel src -d dist",
+    "bundle": "webpack --config webpack.config.js",
+    "build": "npm run clean && npm run compile && npm run bundle"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,8 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.23.9",
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
