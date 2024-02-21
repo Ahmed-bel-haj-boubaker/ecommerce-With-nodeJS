@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+// eslint-disable-next-line import/no-extraneous-dependencies
+const cors = require('cors');
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
 const ApiError = require("./utils/apiError");
@@ -16,10 +18,11 @@ dotenv.config({ path: "config.env" });
 //db connection
 dbConnection();
 
-
+//yup module qui gere le modele et verifie les modele 
 
 // express app
 const app = express();
+app.use(cors());
 
 // MiddleWare
 app.use(express.json())// for parsing JSON responses ( extract the string value from the json to javascript object)
