@@ -6,8 +6,7 @@
   "scripts": {
     "start:dev": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && node server.js",
-    "bundle": "webpack --config webpack.config.js",
-    "build": "npm run bundle"
+    "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "",
