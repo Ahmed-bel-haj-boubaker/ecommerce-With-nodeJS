@@ -15,7 +15,7 @@ exports.addProduct = asyncHandler(async (req, res,next) => {
 
 
 exports.getProduct = asyncHandler(async (req, res,next) => {
-  // 1  Filtring
+  // 1  Filtring http://localhost:8000/api/product?page=1&ratingsAverage[lte]=4&price[lt]=20
   const queryStringObj={...req.query};
   
   const excludesFields = ['page','sort','limit','fields'];
@@ -39,7 +39,7 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
  let mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit);
 
 
-   // 3 sorting 
+   // 3 sorting  http://localhost:8000/api/product?sort=-sold,price
    if(req.query.sort){
     // price, -sold ==> [price, -sold] price -sold
     const sortBy= req.query.sort.split(',').join(' ');
@@ -48,6 +48,16 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
   }else{
     // eslint-disable-next-line no-const-assign
     mongooseQuery= mongooseQuery.sort('-createdAt');
+
+  }
+
+
+  // 4 Filed Limiting http://localhost:8000/api/product?fields=title,price,sold
+  if(req.query.fields){
+    const fildes = req.query.fields.split(',').join(' ');
+    mongooseQuery = mongooseQuery.select(fildes);
+  }else {
+    mongooseQuery = mongooseQuery.select('-__v');
 
   }
 
