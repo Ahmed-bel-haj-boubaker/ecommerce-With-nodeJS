@@ -13,6 +13,7 @@ exports.addProduct = asyncHandler(async (req, res,next) => {
 });
 
 
+
 exports.getProduct = asyncHandler(async (req, res,next) => {
   // 1  Filtring
   const queryStringObj={...req.query};
@@ -20,6 +21,10 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
   const excludesFields = ['page','sort','limit','fields'];
 
   excludesFields.forEach(field=>delete queryStringObj[field]);
+  let queryString = JSON.stringify(queryStringObj);
+      queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g,(match)=> `$${match}`);
+      console.log(JSON.parse(queryString),"1")
+
 
   console.log(req.query)
   console.log(queryStringObj)
@@ -29,7 +34,7 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
   const skip = (page - 1) * limit;
 
   // Build Query 
- const mongooseQuery = ProductModel.find(queryStringObj).skip(skip).limit(limit);
+ const mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit);
 
   // execute Query 
   const Product = await mongooseQuery;
