@@ -32,9 +32,24 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
   const page = req.query.page * 1 || 1; 
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
+  
+
 
   // Build Query 
- const mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit);
+ let mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit);
+
+
+   // 3 sorting 
+   if(req.query.sort){
+    // price, -sold ==> [price, -sold] price -sold
+    const sortBy= req.query.sort.split(',').join(' ');
+    console.log(sortBy)
+    mongooseQuery= mongooseQuery.sort(sortBy);
+  }else{
+    // eslint-disable-next-line no-const-assign
+    mongooseQuery= mongooseQuery.sort('-createdAt');
+
+  }
 
   // execute Query 
   const Product = await mongooseQuery;
