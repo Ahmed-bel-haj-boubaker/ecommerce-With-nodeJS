@@ -23,11 +23,9 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
   excludesFields.forEach(field=>delete queryStringObj[field]);
   let queryString = JSON.stringify(queryStringObj);
       queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g,(match)=> `$${match}`);
-      console.log(JSON.parse(queryString),"1")
+     
 
 
-  console.log(req.query)
-  console.log(queryStringObj)
   // 2 pagination  
   const page = req.query.page * 1 || 1; 
   const limit = req.query.limit * 1 || 5;
@@ -60,6 +58,19 @@ exports.getProduct = asyncHandler(async (req, res,next) => {
     mongooseQuery = mongooseQuery.select('-__v');
 
   }
+  // 5 Search 
+
+  if(req.query.keyword){
+    const query = { };
+    query.$or = [ //$options:'i' ==> men like MENs for search
+      { title :{ $regex: req.query.keyword ,$options:'i'}},
+      { description :{ $regex: req.query.keyword ,$options:'i'}}
+    ];
+    console.log(query)
+    mongooseQuery = mongooseQuery.find(query);
+    
+  }
+
 
   // execute Query 
   const Product = await mongooseQuery;
