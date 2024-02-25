@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const ProductModel = require("../models/productModel");
 const ApiError = require("../utils/apiError");
 const ApiFeature = require("../utils/apiFeature");
+const productModel = require("../models/productModel");
 
 exports.addProduct = asyncHandler(async (req, res, next) => {
   req.body.slug = slugify(req.body.title);
@@ -11,18 +12,23 @@ exports.addProduct = asyncHandler(async (req, res, next) => {
 });
 
 exports.getProduct = asyncHandler(async (req, res, next) => {
+
+  const countDocument = await productModel.countDocuments();
   // Initialize ApiFeature with ProductModel.find() and req.query
   const apiFeature = new ApiFeature(ProductModel.find(), req.query)
-    .pagination()
+    .pagination(countDocument)
     .filter()
     .search()
     .limitFields()
     .sort();
 
+
+    const {mongooseQuery,paginationResult} = apiFeature;
+
   // Execute Query
   try {
-    const products = await apiFeature.mongooseQuery;
-    res.status(200).json({ results: products.length, data: products });
+    const products = await mongooseQuery;
+    res.status(200).json({ results: products.length,paginationResult, data: products });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
