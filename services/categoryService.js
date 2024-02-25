@@ -2,6 +2,7 @@ const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const CategoryModel = require("../models/categoryModel");
 const ApiError = require("../utils/apiError");
+const ApiFeature = require("../utils/apiFeature");
 
 // Promise : In asynchronous programming, promises represent the eventual result (completion or failure) of an asynchronous operation
 //Key Characteristics of Promises:
@@ -35,11 +36,17 @@ exports.addCategories = asyncHandler(async (req, res) => {
 // )
 
 exports.getCategory = asyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1; // extract the string value of the page number in the url and convert it to a number or we initialize the page number to 1
-  const limit = req.query.limit * 1 || 5;
-  const skip = (page - 1) * limit;
-  const categories = await CategoryModel.find({}).skip(skip).limit(limit);
-  res.status(200).json({ results: categories.length, page, data: categories });
+  const countDocument = await CategoryModel.countDocuments();
+  // Initialize ApiFeature with ProductModel.find() and req.query
+  const apiFeature = new ApiFeature(CategoryModel.find(), req.query)
+    .pagination(countDocument)
+    .filter()
+    .search()
+    .limitFields()
+    .sort();
+    const {mongooseQuery,paginationResult} = apiFeature;
+    const categories = await mongooseQuery;
+  res.status(200).json({ results: categories.length, paginationResult, data: categories });
 });
 
 exports.getCategoryById = asyncHandler(async (req, res, next) => {

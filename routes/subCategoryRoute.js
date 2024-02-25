@@ -1,5 +1,5 @@
 const express = require("express");
-const {addSubCategories, getSubCategories, updateSubCategory, deleteSubCategory, getSubCategoryById,setCategoryIdToBody} = require("../services/subCategoryService");
+const {addSubCategories, getSubCategories, updateSubCategory, deleteSubCategory, getSubCategoryById,setCategoryIdToBody,createFilterObj} = require("../services/subCategoryService");
 const { createsubCategoryValidator, getsubCategoryByIDValidator, updatesubCategoryValidator, deletesubCategoryValidator } = require("../utils/validator/subCategoryValidator");
 
 
@@ -7,7 +7,7 @@ const { createsubCategoryValidator, getsubCategoryByIDValidator, updatesubCatego
 // ex : We need to access categoryId from category route 
 const router = express.Router({mergeParams:true});
 
-router.route('/').get(getSubCategories);
+router.route('/').get(createFilterObj,getSubCategories);
 
 
 router.route('/addSubCategory')

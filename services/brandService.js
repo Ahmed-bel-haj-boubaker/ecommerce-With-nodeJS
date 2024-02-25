@@ -2,6 +2,8 @@ const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const BrandModel = require("../models/brandModel");
 const ApiError = require("../utils/apiError");
+const ApiFeature = require("../utils/apiFeature");
+const brandModel = require("../models/brandModel");
 
 // Promise : In asynchronous programming, promises represent the eventual result (completion or failure) of an asynchronous operation
 //Key Characteristics of Promises:
@@ -35,11 +37,21 @@ exports.addBrands = asyncHandler(async (req, res) => {
 // )
 
 exports.getBrand = asyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1; // extract the string value of the page number in the url and convert it to a number or we initialize the page number to 1
-  const limit = req.query.limit * 1 || 5;
-  const skip = (page - 1) * limit;
-  const brands = await BrandModel.find({}).skip(skip).limit(limit);
-  res.status(200).json({ results: brands.length, page, data: brands });
+  // const page = req.query.page * 1 || 1; // extract the string value of the page number in the url and convert it to a number or we initialize the page number to 1
+  // const limit = req.query.limit * 1 || 5;
+  // const skip = (page - 1) * limit;
+  const countDocument = await brandModel.countDocuments();
+  // Initialize ApiFeature with ProductModel.find() and req.query
+  const apiFeature = new ApiFeature(brandModel.find(), req.query)
+    .pagination(countDocument)
+    .filter()
+    .search()
+    .limitFields()
+    .sort();
+    const {mongooseQuery,paginationResult} = apiFeature;
+    const brands = await mongooseQuery;
+
+  res.status(200).json({ results: brands.length, paginationResult, data: brands });
 });
 
 exports.getBrandById = asyncHandler(async (req, res, next) => {

@@ -4,47 +4,44 @@ class ApiFeature {
     this.queryString = queryString;
   }
 
-  search() {
+  search(modelName) {
     // Check if the keyword exists in the query string
     if (this.queryString.keyword) {
-      // Extract the keyword from the query string using object destructuring
-      const { keyword } = this.queryString;
-       console.log(keyword)
-
-      // Construct the MongoDB query to search for documents containing the keyword in title or description
-      this.mongooseQuery = this.mongooseQuery.find({
-        $or: [
-          { title:keyword},
-          { description:keyword }
-        ]
-      });
+      let query = {};
+      if (modelName === "Products") {
+        query.$or = [
+          { title: { $regex: this.queryString.keyword, $options: "i" } },
+          { description: { $regex: this.queryString.keyword, $options: "i" } },
+        ];
+      } else {
+        query = { name: { $regex: this.queryString.keyword, $options: "i" } };
+      }
+  
+      this.mongooseQuery = this.mongooseQuery.find(query)
     }
-  
-    // Return the instance to maintain method chaining
     return this;
-}
-  
 
-filter() {
+  }
+
+  filter() {
     // Filtering: Construct MongoDB query based on query string parameters
     const queryStringObj = { ...this.queryString };
     console.log("Query string object:", queryStringObj);
-  
+
     // Exclude pagination, sorting, and field selection parameters
     const excludesFields = ["page", "sort", "limit", "fields"];
     excludesFields.forEach((field) => delete queryStringObj[field]);
-  
+
     // Convert query string object to MongoDB query format
     let queryStr = JSON.stringify(queryStringObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-  
+
     console.log("Query string after modification:", JSON.parse(queryStr));
-  
+
     // Execute filter query
     this.mongooseQuery = this.mongooseQuery.find(JSON.parse(queryStr));
     return this;
-}
-
+  }
 
   sort() {
     // 3 sorting  http://localhost:8000/api/product?sort=-sold,price
@@ -71,36 +68,32 @@ filter() {
     return this;
   }
 
+  pagination(countDocument) {
+    // 2 pagination
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 1;
+    const skip = (page - 1) * limit;
+    const endDocumentIndex = page * limit;
 
-  pagination(countDocument){
-    
-  // 2 pagination  
-  const page = this.queryString.page * 1 || 1; 
-  const limit = this.queryString.limit * 1 || 1;
-  const skip = (page - 1) * limit;
-  const endDocumentIndex = page * limit;
+    const pagination = {};
 
+    pagination.currentPage = page;
+    pagination.limit = limit;
+    pagination.numberOfPages = Math.ceil(countDocument / limit);
 
-  const pagination = {};
+    if (endDocumentIndex < countDocument) {
+      pagination.next = page + 1;
+    }
 
-  pagination.currentPage = page;
-  pagination.limit = limit;
-  pagination.numberOfPages = Math.ceil(countDocument / limit); 
+    if (skip > 0) {
+      pagination.prev = page - 1;
+    }
 
+    this.paginationResult = pagination;
 
-  if(endDocumentIndex < countDocument){
-     pagination.next = page +1;
-  }
+    this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
 
-  if(skip> 0){
-    pagination.prev = page-1;
-  }
-  
-  this.paginationResult = pagination;
-
-  this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
-   
-  return this;
+    return this;
   }
 }
 

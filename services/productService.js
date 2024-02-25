@@ -18,7 +18,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
   const apiFeature = new ApiFeature(ProductModel.find(), req.query)
     .pagination(countDocument)
     .filter()
-    .search()
+    .search('Products')
     .limitFields()
     .sort();
 
