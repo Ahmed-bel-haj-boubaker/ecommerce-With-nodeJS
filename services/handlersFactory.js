@@ -49,17 +49,10 @@ exports.getDocument = (model) =>
     }
   });
 
-exports.addDocument = (model) =>
+  exports.addDocument = (Model) =>
   asyncHandler(async (req, res) => {
-    //asyncHandler:  middleware is often created to handle asynchronous operations within a route handler
-    // ensuring that any errors that occur during the asynchronous operation are properly caught and forwarded to the error-handling middleware.
-    try {
-      const { name } = req.body;
-      const document = await model.create({ name, slug: slugify(name) }); // Generate a 'slug' based on the 'name' using slugify
-      res.status(201).json({ data: document });
-    } catch (error) {
-      res.status(201).json({ error: error });
-    }
+    const newDoc = await Model.create(req.body);
+    res.status(201).json({ data: newDoc });
   });
 
 exports.getById = (model) =>
