@@ -1,8 +1,5 @@
-const slugify = require("slugify");
-const asyncHandler = require("express-async-handler");
 const CategoryModel = require("../models/categoryModel");
-const ApiError = require("../utils/apiError");
-const ApiFeature = require("../utils/apiFeature");
+const handlerFactory = require('./handlersFactory');
 
 // Promise : In asynchronous programming, promises represent the eventual result (completion or failure) of an asynchronous operation
 //Key Characteristics of Promises:
@@ -18,13 +15,15 @@ const ApiFeature = require("../utils/apiFeature");
 
 //asyncHandler catch the error from the async await function and give it to the express error handler
 
-exports.addCategories = asyncHandler(async (req, res) => {
-  //asyncHandler:  middleware is often created to handle asynchronous operations within a route handler
-  // ensuring that any errors that occur during the asynchronous operation are properly caught and forwarded to the error-handling middleware.
-  const {name} = req.body;
-  const category = await CategoryModel.create({ name, slug: slugify(name) }); // Generate a 'slug' based on the 'name' using slugify
-  res.status(201).json({ data: category });
-});
+exports.addCategories = handlerFactory.addDocument(CategoryModel);
+
+// // // asyncHandler(async (req, res) => {
+// // //   //asyncHandler:  middleware is often created to handle asynchronous operations within a route handler
+// // //   // ensuring that any errors that occur during the asynchronous operation are properly caught and forwarded to the error-handling middleware.
+// // //   const {name} = req.body;
+// // //   const category = await CategoryModel.create({ name, slug: slugify(name) }); // Generate a 'slug' based on the 'name' using slugify
+// // //   res.status(201).json({ data: category });
+// // // });
 // console.log(name);
 // const newCategory = new CategoryModel({name});
 // newCategory.save().then(
@@ -35,51 +34,10 @@ exports.addCategories = asyncHandler(async (req, res) => {
 //     (err)=>{res.send(err)}
 // )
 
-exports.getCategory = asyncHandler(async (req, res) => {
-  const countDocument = await CategoryModel.countDocuments();
-  // Initialize ApiFeature with ProductModel.find() and req.query
-  const apiFeature = new ApiFeature(CategoryModel.find(), req.query)
-    .pagination(countDocument)
-    .filter()
-    .search()
-    .limitFields()
-    .sort();
-    const {mongooseQuery,paginationResult} = apiFeature;
-    const categories = await mongooseQuery;
-  res.status(200).json({ results: categories.length, paginationResult, data: categories });
-});
+exports.getCategory = handlerFactory.getDocument(CategoryModel);
 
-exports.getCategoryById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await CategoryModel.findById(id);
-  if (!category) {
-    // return res.status(404).json({ error: `No category found with id ${id}` });
-    return next(new ApiError(`No Category for this id: ${id}`, 404));
-  }
-  res.status(200).json({ data: category });
-});
+exports.getCategoryById = handlerFactory.getById(CategoryModel);
 
-exports.updateCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { name } = req.body;
-  const categorie = await CategoryModel.findById(id);
-  if (!categorie) {
-     next(new ApiError(`No Category for this id: ${id}`, 404));
-  }
-  const categoryUpdated = await CategoryModel.findOneAndUpdate(
-    { _id: id },
-    { name, slug: slugify(name) },
-    { new: true }
-  );
-  res.status(201).json({ categoryUpdated: categoryUpdated });
-});
+exports.updateCategory = handlerFactory.updateOne(CategoryModel);
 
-exports.deleteCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await CategoryModel.findOneAndDelete({ _id: id });
-  if (!category) {
-    return next(new ApiError(`No Category for this id: ${id}`, 404));
-  }
-
-  res.status(204).json({ msg: "Category is deleted" });
-});
+exports.deleteCategory = handlerFactory.deleteOne(CategoryModel);
