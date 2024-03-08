@@ -10,9 +10,11 @@ const globalError = require("./middlewares/errorMiddlewares");
 const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandRoute = require("./routes/brandRoute");
 const productRoute = require("./routes/productRoute");
+const swaggerSpec = require('./config/swagger');
+// eslint-disable-next-line import/no-extraneous-dependencies, import/order
+const swaggerUi = require('swagger-ui-express');
 
 dotenv.config({ path: "config.env" });
-
 
 
 //db connection
@@ -23,6 +25,7 @@ dbConnection();
 // express app
 const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
 
 // MiddleWare
 app.use(express.json())// for parsing JSON responses ( extract the string value from the json to javascript object)
@@ -33,6 +36,8 @@ if (process.env.NODE_ENV === "development"){
 
 //Globale error handler middleware that is provided by Express
 
+
+app.use('/api-doc',swaggerUi.serve,swaggerUi.setup(swaggerSpec));
 
 //Routes
 app.use('/api/category',categoryRoute);
