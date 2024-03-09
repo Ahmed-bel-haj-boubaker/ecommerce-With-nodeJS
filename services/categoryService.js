@@ -1,6 +1,12 @@
-const CategoryModel = require("../models/categoryModel");
-const handlerFactory = require('./handlersFactory');
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+const sharp = require("sharp");
+const asyncHandler = require("express-async-handler");
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { v4: uuidv4 } = require("uuid");
+const handlerFactory = require('./handlersFactory');
+const CategoryModel = require("../models/categoryModel");
+const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 // Promise : In asynchronous programming, promises represent the eventual result (completion or failure) of an asynchronous operation
 //Key Characteristics of Promises:
 // Three States: pending, fulfilled, and rejected.
@@ -41,3 +47,19 @@ exports.getCategoryById = handlerFactory.getById(CategoryModel);
 exports.updateCategory = handlerFactory.updateOne(CategoryModel);
 
 exports.deleteCategory = handlerFactory.deleteOne(CategoryModel);
+
+
+exports.uploadBrandImage = uploadSingleImage("image");
+
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+    const filename = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+     console.log(req.file)
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`./uploads/categories/${filename}`);
+    req.body.image = filename;
+  
+    next();
+  });

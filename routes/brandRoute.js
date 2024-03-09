@@ -1,7 +1,3 @@
-
-
-
-
 const express = require("express");
 const {
   addBrands,
@@ -28,7 +24,7 @@ router
 router
   .route("/:id")
   .get(getBrandByIDValidator, getBrandById)
-  .put(updateBrandValidator, updateBrand)
+  .put( uploadBrandImage, resizeImage,updateBrandValidator, updateBrand)
   .delete(deleteBrandValidator, deleteBrand);
 
 module.exports = router;
