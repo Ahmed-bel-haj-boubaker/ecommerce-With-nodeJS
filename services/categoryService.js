@@ -52,7 +52,7 @@ exports.deleteCategory = handlerFactory.deleteOne(CategoryModel);
 exports.uploadBrandImage = uploadSingleImage("image");
 
 exports.resizeImage = asyncHandler(async (req, res, next) => {
-    const filename = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+    const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
      console.log(req.file)
     await sharp(req.file.buffer)
       .resize(600, 600)

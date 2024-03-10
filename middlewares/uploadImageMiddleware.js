@@ -5,8 +5,7 @@ const ApiError = ('../utils/apiError');
 
 const multerOptions = ()=>{
     const multerStorage = multer.memoryStorage();  // the uploaded file is stored in the RAM of the server instead of being written to disk.
-                             //This means that the file data resides in the volatile memory (RAM) of the server until it's processed by your application.
-    
+                                                   //This means that the file data resides in the volatile memory (RAM) of the server until it's processed by your application.    
                                                    //   Once the file has been processed or transferred to its final destination (if applicable), it's removed from memory.
 
     const multerFilter = function(req,file,cb){

@@ -9,9 +9,9 @@ const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddlewares");
 const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandRoute = require("./routes/brandRoute");
+const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
 // eslint-disable-next-line import/no-extraneous-dependencies, import/order
-const swaggerUi = require('swagger-ui-express');
 
 dotenv.config({ path: "config.env" });
 
@@ -38,6 +38,7 @@ if (process.env.NODE_ENV === "development"){
 
 
 //Routes
+app.use('/api/user',userRoute);
 app.use('/api/category',categoryRoute);
 app.use('/subCategory',subCategoryRoute);
 app.use('/api/brands',brandRoute);
