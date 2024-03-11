@@ -24,7 +24,7 @@ router
 router
   .route("/:id")
   .get(getUserByIDValidator, getUserById)
-  .put( uploadUserImage, resizeImage, updateUser)
-  .delete( deleteUser);
+  .put( uploadUserImage, resizeImage,updateUserValidator, updateUser)
+  .delete( deleteUserValidator,deleteUser);
 
 module.exports = router;

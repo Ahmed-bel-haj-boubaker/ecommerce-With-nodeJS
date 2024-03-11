@@ -3,21 +3,19 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const ApiFeature = require("../utils/apiFeature");
 
-exports.deleteOne = (model) => 
+exports.deleteOne = (model) =>
   asyncHandler(async (req, res, next) => {
     try {
-        const { id } = req.params;
-         await model.findOneAndDelete({ _id: id });
-        return res.status(204).json({ msg: "document is deleted" });
+      const { id } = req.params;
+      await model.findOneAndDelete({ _id: id });
+      return res.status(204).json({ msg: "document is deleted" });
     } catch (error) {
-        const { id } = req.params;
+      const { id } = req.params;
 
-        next(new ApiError(`No document for this id: ${id}`, 404));
-        return res.status(204).json({ msg: "document is deleted" });
+      next(new ApiError(`No document for this id: ${id}`, 404));
+      return res.status(204).json({ msg: "document is deleted" });
     }
-   
   });
-
 
 exports.getDocument = (model) =>
   asyncHandler(async (req, res) => {
@@ -30,7 +28,7 @@ exports.getDocument = (model) =>
       const apiFeature = new ApiFeature(model.find(), req.query)
         .pagination(countDocument)
         .filter()
-        .search('Products')
+        .search("Products")
         .limitFields()
         .sort();
       const { mongooseQuery, paginationResult } = apiFeature;
@@ -49,7 +47,7 @@ exports.getDocument = (model) =>
     }
   });
 
-  exports.addDocument = (Model) =>
+exports.addDocument = (Model) =>
   asyncHandler(async (req, res) => {
     const newDoc = await Model.create(req.body);
     res.status(201).json({ data: newDoc });
@@ -70,18 +68,17 @@ exports.getById = (model) =>
 
 exports.updateOne = (model) =>
   asyncHandler(async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const { name } = req.body;
-      const updatedDocument = await model.findOneAndUpdate(
-        { _id: id },
-        { name, slug: slugify(name) },
-        { new: true }
+    const updatedDocument = await model.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedDocument) {
+      return next(
+        new ApiError(`No document for this id: ${req.params.id}`, 404)
       );
-      return res.status(201).json({ updatedDocument: updatedDocument });
-    } catch (error) {
-      const { id } = req.params;
-      next(new ApiError(`No document for this id: ${id}`, 404));
-      return res.status(404).json({ error: error });
     }
+
+    updatedDocument.save();
+    res.status(200).json({ updatedDocument: updatedDocument });
   });
