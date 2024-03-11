@@ -1,7 +1,6 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
 const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { v4: uuidv4 } = require("uuid");
 const userModel = require("../models/userModel");
 const handlerFactory = require("./handlersFactory");
