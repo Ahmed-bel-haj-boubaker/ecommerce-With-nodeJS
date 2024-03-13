@@ -72,5 +72,9 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
 
   // 3 - check if user exist from the token ( bcz the id of the user is in the token)
+  const currentUser = await User.findById(decoded.userId);
+  if(!currentUser){
+    return next(new ApiError('the user that belong to this token does no longer exist',401))
+  }
   // 4 - check if user change his password after token created
 });
