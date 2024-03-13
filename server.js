@@ -10,6 +10,7 @@ const globalError = require("./middlewares/errorMiddlewares");
 const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandRoute = require("./routes/brandRoute");
 const userRoute = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
 // eslint-disable-next-line import/no-extraneous-dependencies, import/order
 
@@ -43,6 +44,8 @@ app.use('/api/category',categoryRoute);
 app.use('/subCategory',subCategoryRoute);
 app.use('/api/brands',brandRoute);
 app.use('/api/product',productRoute);
+app.use('/api/auth',authRoute);
+
 app.all('*',(req,res,next)=>{
   // Create Error and send it to error handling middleware 
   // const err = new Error(`Can't find this Route: ${req.originalUrl}`);
