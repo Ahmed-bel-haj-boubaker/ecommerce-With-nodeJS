@@ -1,5 +1,5 @@
 const { check, body } = require("express-validator");
-const bcrypt = require("bcrypt");
+
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 // eslint-disable-next-line import/order
 const slugify = require("slugify");
@@ -47,3 +47,16 @@ exports.signupValidator = [
   validatorMiddleware,
 ];
 
+exports.loginValidator = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email is required ")
+    .isEmail()
+    .withMessage("invalid Email address"),
+  check("password")
+    .notEmpty()
+    .withMessage("password is required")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters"),
+  validatorMiddleware,
+];
