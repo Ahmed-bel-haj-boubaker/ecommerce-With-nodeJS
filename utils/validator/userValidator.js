@@ -1,4 +1,5 @@
 const { check, body } = require("express-validator");
+const bcrypt = require("bcrypt");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 // eslint-disable-next-line import/order
 const slugify = require("slugify");
@@ -62,6 +63,7 @@ exports.createUserValidator = [
 exports.updateUserValidator = [
   check("id").isMongoId().withMessage("Invalid User id format"),
   check("name")
+    .optional()
     .notEmpty()
     .withMessage("Name is required")
     .isLength({ min: 3 })
@@ -74,6 +76,7 @@ exports.updateUserValidator = [
       return true;
     }),
   check("email")
+    .optional()
     .notEmpty()
     .withMessage("Email is required ")
     .isEmail()
@@ -86,6 +89,7 @@ exports.updateUserValidator = [
       })
     ),
   check("phone")
+    .optional()
     .notEmpty()
     .withMessage("Phone number is required ")
     .isMobilePhone(["ar-TN"])
@@ -93,10 +97,48 @@ exports.updateUserValidator = [
 
   check("profileImg").optional(),
   check("role").optional(),
+
   validatorMiddleware,
 ];
 
 exports.deleteUserValidator = [
   check("id").isMongoId().withMessage("Invalid User id format"),
+  validatorMiddleware,
+];
+
+exports.changeUserPasswordValidator = [
+  check("id").isMongoId().withMessage("Invalid User id format"),
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("You must enter your current password"),
+  body("passwordConfirm")
+    .notEmpty()
+    .withMessage("You must enter the password confirm"),
+  body("password")
+    .notEmpty()
+    .withMessage("You must enter new password")
+    .custom(async (val, { req }) => {
+      // 1) verifie the cuurentPassword is valid or not
+      const user = await userModel.findById(req.params.id);
+      if (!user) {
+        throw new Error("There is no user for this id");
+      }
+      const VerifiePassword = await bcrypt.compare(
+        req.body.currentPassword,
+        user.password
+      );
+      console.log(VerifiePassword);
+      if (VerifiePassword) {
+        console.log(`this is the val: ${user.password} `);
+        console.log(
+          `this is the currentPassword: ${req.body.currentPassword} `
+        );
+      }
+
+      if(req.body.passwordConfirm !== req.body.password){
+        throw new Error("Password Confirmation incorrect");
+      }
+      return true;
+    }),
   validatorMiddleware,
 ];

@@ -54,12 +54,15 @@ exports.uploadBrandImage = uploadSingleImage("image");
 exports.resizeImage = asyncHandler(async (req, res, next) => {
     const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
      console.log(req.file)
-    await sharp(req.file.buffer)
+    if(req.file){
+    
+      await sharp(req.file.buffer)
       .resize(600, 600)
       .toFormat("jpeg")
       .jpeg({ quality: 95 })
-      .toFile(`./uploads/categories/${filename}`);
-    req.body.image = filename;
+      .toFile(`./uploads/users/${filename}`);
+    req.body.profileImg = filename;
+    }
   
     next();
   });
