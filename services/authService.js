@@ -58,23 +58,46 @@ exports.protect = asyncHandler(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1]; // to access the token Bearer[0]eyJhbGciOiJIUzI1Ni[1]
     console.log(token);
   }
-  if(!token){
-    return next(new ApiError('You are not login , please login to access this route',401));
+  if (!token) {
+    return next(
+      new ApiError("You are not login , please login to access this route", 401)
+    );
   }
   // 2 - verify token(no change happens , expired token)
- const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
- console.log(decoded)
-//  {
-//     userId: '65f1062da5506a5991d4f021',
-//     iat: 1710295982,
-//     exp: 1718071982
-//   }
-
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  console.log(decoded);
+  //  {
+  //     userId: '65f1062da5506a5991d4f021',
+  //     iat: 1710295982,
+  //     exp: 1718071982
+  //   }
 
   // 3 - check if user exist from the token ( bcz the id of the user is in the token)
   const currentUser = await User.findById(decoded.userId);
-  if(!currentUser){
-    return next(new ApiError('the user that belong to this token does no longer exist',401))
+  if (!currentUser) {
+    return next(
+      new ApiError(
+        "the user that belong to this token does no longer exist",
+        401
+      )
+    );
   }
   // 4 - check if user change his password after token created
+
+  if (currentUser.passwordChangedAt) {
+    const passChangedTimeStamp = parseInt(
+      currentUser.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    if (passChangedTimeStamp > decoded.iat) {
+      return next(
+        new ApiError(
+          "User recently changed his password, Please login again..",
+          401
+        )
+      );
+    }
+  }
+  req.user = currentUser;
+  next();
 });
