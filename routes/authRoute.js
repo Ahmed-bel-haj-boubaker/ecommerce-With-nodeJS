@@ -3,7 +3,8 @@ const {
   signup,
   login,
   forgetPassword,
-  verifyResetCode
+  verifyResetCode,
+  resetPassword
 } = require("../services/authService");
 const {
   signupValidator,
@@ -16,4 +17,6 @@ router.post('/signup',signupValidator,signup)
 router.post('/login',loginValidator,login)
 router.post('/forgotPassword',forgetPassword)
 router.post('/verifyResetCode',verifyResetCode)
+router.put('/resetPassword',resetPassword)
+
 module.exports = router;
