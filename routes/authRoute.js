@@ -1,7 +1,8 @@
 const express = require("express");
 const {
   signup,
-  login
+  login,
+  forgetPassword
 } = require("../services/authService");
 const {
   signupValidator,
@@ -12,4 +13,5 @@ const router = express.Router();
 
 router.post('/signup',signupValidator,signup)
 router.post('/login',loginValidator,login)
+router.post('/forgotPassword',forgetPassword)
 module.exports = router;
