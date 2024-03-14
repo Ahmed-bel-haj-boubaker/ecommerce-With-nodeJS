@@ -2,20 +2,11 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
 const User = require("../models/userModel");
 const ApiError = require("../utils/apiError");
 const ApiFeature = require("../utils/apiFeature");
-
-const generateToken = (payload) =>
-  jwt.sign(
-    {
-      userId: payload, // data payload
-    },
-    process.env.JWT_SECRET_KEY, // secret key
-    {
-      expiresIn: process.env.JWT_EXPIRE_TIME, //expire time
-    }
-  );
+const generateToken = require('../utils/generateToken');
 
 exports.signup = asyncHandler(async (req, res, next) => {
   // 1 create User
@@ -112,3 +103,15 @@ exports.allowedTo = (roles) =>
     }
     next();
   });
+
+
+exports.forgetPassword = asyncHandler(async(req, res, next) => {
+  // 1 search for the user if he exists
+  const user = await User.findOne({email : req.body.email});
+
+  if(!user){
+    return next(new ApiError(`user not found with this email address : ${req.body.email}`))
+  }
+  
+  
+})
