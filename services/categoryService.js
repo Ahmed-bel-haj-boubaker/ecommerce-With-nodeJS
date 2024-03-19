@@ -60,7 +60,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
       .resize(600, 600)
       .toFormat("jpeg")
       .jpeg({ quality: 95 })
-      .toFile(`./uploads/users/${filename}`);
+      .toFile(`./uploads/categories/${filename}`);
     req.body.profileImg = filename;
     }
   

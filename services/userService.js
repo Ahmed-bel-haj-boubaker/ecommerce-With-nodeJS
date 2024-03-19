@@ -1,14 +1,11 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
 const { v4: uuidv4 } = require("uuid");
-const slugify = require("slugify");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const handlerFactory = require("./handlersFactory");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const ApiError = require("../utils/apiError");
-const ApiFeature = require("../utils/apiFeature");
 
 exports.addUsers = handlerFactory.addDocument(userModel);
 

@@ -12,6 +12,7 @@ const brandRoute = require("./routes/brandRoute");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
+const reviewRoute = require('./routes/reviewRoute');
 // eslint-disable-next-line import/no-extraneous-dependencies, import/order
 
 dotenv.config({ path: "config.env" });
@@ -45,7 +46,7 @@ app.use('/subCategory',subCategoryRoute);
 app.use('/api/brands',brandRoute);
 app.use('/api/product',productRoute);
 app.use('/api/auth',authRoute);
-
+app.use('/api/review',reviewRoute);
 app.all('*',(req,res,next)=>{
   // Create Error and send it to error handling middleware 
   // const err = new Error(`Can't find this Route: ${req.originalUrl}`);
