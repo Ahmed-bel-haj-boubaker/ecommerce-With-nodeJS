@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
            ref:'Product'
         }
     ],
-    adresses:[
+    addresses:[
         {
             id:{type:mongoose.Schema.ObjectId},
             alias: String,
