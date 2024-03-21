@@ -35,8 +35,23 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum: ['user', 'manager', 'admin'],
         default:'user'
-    }
-
+    },
+    wishList:[
+        {
+           type:mongoose.Schema.ObjectId,
+           ref:'Product'
+        }
+    ],
+    adresses:[
+        {
+            id:{type:mongoose.Schema.ObjectId},
+            alias: String,
+            details: String,
+            phone: Number,
+            city: String,
+            postalCode: String,
+        }
+    ]
 
 },{timestamps:true});
 
