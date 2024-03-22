@@ -37,18 +37,19 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
     //console.log(item.product.toString()) ==>65e0ef4a68d7c4abfd8f2d37
     //console.log(productIndex, " product Index");==> 4
 
-    if (productIndex > -1) { // if there is a product in cartItems[]
-      const cartItem = cart.cartItems[productIndex]; 
+    if (productIndex > -1) {
+      // if there is a product in cartItems[]
+      const cartItem = cart.cartItems[productIndex];
       //console.log(cartItem,'cartItem')
-    // for example : cart.cartItems[1] ====> {
-    //     product: new ObjectId('65e0ef4a68d7c4abfd8f2d35'),
-    //     quantity: 12,
-    //     price: 55.99,
-    //     _id: new ObjectId('65fcdce13b9c4c2fd49cb0ae')
-    //   }
-      
-      cartItem.quantity += 1;//increment the quantity +1 
- 
+      // for example : cart.cartItems[1] ====> {
+      //     product: new ObjectId('65e0ef4a68d7c4abfd8f2d35'),
+      //     quantity: 12,
+      //     price: 55.99,
+      //     _id: new ObjectId('65fcdce13b9c4c2fd49cb0ae')
+      //   }
+
+      cartItem.quantity += 1; //increment the quantity +1
+
       cart.cartItems[productIndex] = cartItem;
       console.log(cartItem);
     } else {
@@ -68,16 +69,37 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
+  const cart = await Cart.findOne({ user: req.user._id });
+  if (!cart) {
+    return next(
+      new ApiError(`There is no cart for this user id : ${req.user._id}`, 404)
+    );
+  }
+  res.status(200).json({
+    status: "success",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
+});
 
-exports.getLoggedUserCart = asyncHandler(async(req,res,next)=>{
+exports.removeItemFromCart = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const cart = await Cart.findOneAndUpdate(
+    { user: userId },
+    {
+      $pull: { cartItems: { _id: req.params.itemId } },
+    },{new:true}
+  );
+  this.calcTotalCartPrice(cart);
+  cart.save();
 
-    const cart = await Cart.findOne({user:req.user._id});
-    if(!cart){
-        return next(new ApiError(`There is no cart for this user id : ${req.user._id}`, 404))
-    }
-    res.status(200).json({
-        status:'success',
-        numOfCartItems:cart.cartItems.length,
-        data:cart
-    })
-})
+  res.status(200).json({
+    status:'success',
+    numOfCartItems:cart.cartItems.length,
+    data:cart
+  });
+
+});
+
+

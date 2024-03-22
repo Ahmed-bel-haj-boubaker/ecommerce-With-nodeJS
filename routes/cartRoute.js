@@ -5,5 +5,6 @@ const CartService = require("../services/cartService");
 const router = express.Router();
 router.use(authService.protect, authService.allowedTo("user"));
 router.route("/").post(CartService.addProductToCart).get(CartService.getLoggedUserCart);
+router.route('/:itemId').put(CartService.removeItemFromCart);
 
 module.exports = router;
