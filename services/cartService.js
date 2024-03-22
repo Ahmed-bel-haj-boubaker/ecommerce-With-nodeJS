@@ -139,5 +139,34 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.applyCoupon = asyncHandler(async (req, res, next) => {
+  //1 - Get Coupon based on coupon name
 
+  const coupon = await Coupon.findOne({
+    name: req.body.coupon,
+    expire: { $gt: Date.now() },
+  });
 
+  if (!coupon) {
+    return next(new ApiError(`Coupon is invalid or expired`));
+  }
+
+  //2 - Get Logged User Cart to get total cart price
+
+  const cart = await Cart.findOne({user:req.user._id});
+
+  const {totalPrice} = cart;
+  
+  // 3 - Calculate priceAfterDiscount
+
+  const priceAfterDiscount = (totalPrice - (totalPrice*coupon.discount) /100).toFixed(2);
+  cart.totalPriceAfterDiscount = priceAfterDiscount;
+console.log(priceAfterDiscount)
+  await cart.save();
+  res.status(200).json({
+    status: 'success',
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
+
+});

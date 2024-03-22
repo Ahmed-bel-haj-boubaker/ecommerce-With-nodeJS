@@ -8,7 +8,8 @@ router
   .route("/")
   .post(CartService.addProductToCart)
   .get(CartService.getLoggedUserCart)
-  .delete(CartService.clearCart);
+  .delete(CartService.clearCart)
+  .put(CartService.applyCoupon);
 router
   .route("/:itemId")
   .delete(CartService.removeItemFromCart)
