@@ -1,9 +1,10 @@
 const express = require("express");
 const authService = require("../services/authService");
 
+const router = express.Router();
 const addressService = require("../services/addressService");
 
-const router = express.Router();
+
 
 router.use(authService.protect, authService.allowedTo("user"));
 router
