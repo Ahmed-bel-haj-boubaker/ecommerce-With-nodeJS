@@ -3,17 +3,10 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require('cors');
 const dbConnection = require("./config/database");
-const categoryRoute = require("./routes/categoryRoute");
+
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddlewares");
-const subCategoryRoute = require('./routes/subCategoryRoute');
-const brandRoute = require("./routes/brandRoute");
-const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
-const productRoute = require("./routes/productRoute");
-const reviewRoute = require('./routes/reviewRoute');
-const addressRoute = require('./routes/addressRoute');
-const wishlistRoute = require('./routes/wishlistRoute');
+const mountRoutes = require("./routes/indexRoute");
 
 dotenv.config({ path: "config.env" });
 
@@ -39,16 +32,7 @@ if (process.env.NODE_ENV === "development"){
 
 
 
-//Routes
-app.use('/api/user',userRoute);
-app.use('/api/category',categoryRoute);
-app.use('/subCategory',subCategoryRoute);
-app.use('/api/brands',brandRoute);
-app.use('/api/product',productRoute);
-app.use('/api/auth',authRoute);
-app.use('/api/review',reviewRoute);
-app.use('/api/addresses', addressRoute);
-app.use('/api/wishlist', wishlistRoute);
+mountRoutes(app);
 app.all('*',(req,res,next)=>{
   // Create Error and send it to error handling middleware 
   // const err = new Error(`Can't find this Route: ${req.originalUrl}`);
