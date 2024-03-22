@@ -89,23 +89,55 @@ exports.removeItemFromCart = asyncHandler(async (req, res, next) => {
     { user: userId },
     {
       $pull: { cartItems: { _id: req.params.itemId } },
-    },{new:true}
+    },
+    { new: true }
   );
   this.calcTotalCartPrice(cart);
   cart.save();
 
   res.status(200).json({
-    status:'success',
-    numOfCartItems:cart.cartItems.length,
-    data:cart
+    status: "success",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
   });
-
 });
 
-exports.clearCart = asyncHandler(async(req,res,next)=>{
-     await Cart.findOneAndDelete({user:req.user._id});
-    res.status(200).send();
-})
+exports.clearCart = asyncHandler(async (req, res, next) => {
+  await Cart.findOneAndDelete({ user: req.user._id });
+  res.status(200).send();
+});
+
+exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
+  const { quantity } = req.body;
+
+  const cart = await Cart.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return next(new ApiError(`there is no cart for user ${req.user._id}`, 404));
+  }
+  const productIndex = cart.cartItems.findIndex(
+    (item) => item._id.toString() === req.params.itemId
+  );
+  if (productIndex > -1) {
+    const cartItem = cart.cartItems[productIndex];
+    cartItem.quantity = quantity;
+    cart.cartItems[productIndex] = cartItem;
+  } else {
+    return next(
+      new ApiError(`there is no item for this id :${req.params.itemId}`, 404)
+    );
+  }
+
+  this.calcTotalCartPrice(cart);
+
+  await cart.save();
+  res.status(200).json({
+    status: "success",
+    message: "Product added to cart successfully",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
+});
 
 
 

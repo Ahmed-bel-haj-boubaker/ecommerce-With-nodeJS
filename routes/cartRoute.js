@@ -8,7 +8,10 @@ router
   .route("/")
   .post(CartService.addProductToCart)
   .get(CartService.getLoggedUserCart)
-  .delete(CartService.clearCart)
-router.route("/:itemId").put(CartService.removeItemFromCart);
+  .delete(CartService.clearCart);
+router
+  .route("/:itemId")
+  .delete(CartService.removeItemFromCart)
+  .put(CartService.updateCartItemQuantity);
 
 module.exports = router;
