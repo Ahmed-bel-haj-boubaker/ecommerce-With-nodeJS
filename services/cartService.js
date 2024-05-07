@@ -18,7 +18,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   const { productId, color } = req.body; // to desctruct the value of productId and color from the body
 
   const product = await Product.findById(productId); // find if the product that i have passed in the request body exist or not
-  console.log(product);
+  console.log("product",product);
   //1 - get Cart for logged user
 
   let cart = await Cart.findOne({ user: req.user._id }); // find if the logged user have a cart or not
