@@ -4,19 +4,19 @@ const {
   login,
   forgetPassword,
   verifyResetCode,
-  resetPassword
+  resetPassword,
 } = require("../services/authService");
 const {
   signupValidator,
-  loginValidator
+  loginValidator,
 } = require("../utils/validator/authValidator");
 
 const router = express.Router();
 
-router.post('/signup',signupValidator,signup)
-router.post('/login',loginValidator,login)
-router.post('/forgotPassword',forgetPassword)
-router.post('/verifyResetCode',verifyResetCode)
-router.put('/resetPassword',resetPassword)
+router.post("/signup", signupValidator, signup);
+router.post("/login", loginValidator, login);
+router.post("/forgotPassword", forgetPassword);
+router.post("/verifyResetCode", verifyResetCode);
+router.put("/resetPassword", resetPassword);
 
 module.exports = router;

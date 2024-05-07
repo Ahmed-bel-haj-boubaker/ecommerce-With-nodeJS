@@ -16,7 +16,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-
+  console.log(user)
   // 2 generate token
 
   const token = generateToken(user._id);

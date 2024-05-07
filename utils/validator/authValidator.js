@@ -25,6 +25,7 @@ exports.signupValidator = [
     .withMessage("invalid Email address")
     .custom((val) =>
       userModel.findOne({ email: val }).then((user) => {
+        console.log("email", val);
         if (user) {
           return Promise.reject(new Error("Email is already exist"));
         }

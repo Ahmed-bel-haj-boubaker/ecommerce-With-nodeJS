@@ -18,7 +18,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   const { productId, color } = req.body; // to desctruct the value of productId and color from the body
 
   const product = await Product.findById(productId); // find if the product that i have passed in the request body exist or not
-
+  console.log(product);
   //1 - get Cart for logged user
 
   let cart = await Cart.findOne({ user: req.user._id }); // find if the logged user have a cart or not
@@ -70,7 +70,10 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
 });
 
 exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user._id });
+  const cart = await Cart.findOne({ user: req.user._id }).populate({
+    path: "cartItems.product",
+    select: "title imageCover", 
+  });
   if (!cart) {
     return next(
       new ApiError(`There is no cart for this user id : ${req.user._id}`, 404)
@@ -153,20 +156,22 @@ exports.applyCoupon = asyncHandler(async (req, res, next) => {
 
   //2 - Get Logged User Cart to get total cart price
 
-  const cart = await Cart.findOne({user:req.user._id});
+  const cart = await Cart.findOne({ user: req.user._id });
 
-  const {totalPrice} = cart;
-  
+  const { totalPrice } = cart;
+
   // 3 - Calculate priceAfterDiscount
 
-  const priceAfterDiscount = (totalPrice - (totalPrice*coupon.discount) /100).toFixed(2);
+  const priceAfterDiscount = (
+    totalPrice -
+    (totalPrice * coupon.discount) / 100
+  ).toFixed(2);
   cart.totalPriceAfterDiscount = priceAfterDiscount;
-console.log(priceAfterDiscount)
+  console.log(priceAfterDiscount);
   await cart.save();
   res.status(200).json({
-    status: 'success',
+    status: "success",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
-
 });
