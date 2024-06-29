@@ -8,6 +8,7 @@ const ApiError = require("../utils/apiError");
 const ApiFeature = require("../utils/apiFeature");
 const generateToken = require("../utils/generateToken");
 const sendEmail = require("../utils/sendEmail");
+const Cart = require("../models/cartModel");
 
 exports.signup = asyncHandler(async (req, res, next) => {
   // 1 create User
@@ -16,8 +17,15 @@ exports.signup = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-  console.log(user)
   // 2 generate token
+  let cart = await Cart.findOne({ user: user._id }); // find if the logged user have a cart or not
+
+  if (!cart) {
+    cart = await Cart.create({
+      user: user._id,
+      cartItems: [],
+    }); // if the logged user does not have a cart so i will create his cart
+  }
 
   const token = generateToken(user._id);
 
@@ -48,7 +56,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1]; // to access the token Bearer[0]eyJhbGciOiJIUzI1Ni[1]
-    console.log(token);
   }
   if (!token) {
     return next(
@@ -57,7 +64,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   }
   // 2 - verify token(no change happens , expired token)
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  console.log(decoded);
   //  {
   //     userId: '65f1062da5506a5991d4f021',
   //     iat: 1710295982,
@@ -170,7 +176,7 @@ exports.verifyResetCode = asyncHandler(async (req, res, next) => {
 });
 
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-  const user =await User.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new ApiError("there is no user with this email address", 404));
   }
@@ -184,7 +190,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   user.passwordresetCode = undefined;
   user.passwordresetCodeExpire = undefined;
 
-  await user.save()
+  await user.save();
 
   const token = generateToken(user._id);
   res.status(200).json({ data: user, token });

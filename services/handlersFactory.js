@@ -35,6 +35,7 @@ exports.getDocument = (model) =>
       const documents = await mongooseQuery;
 
       if (documents) {
+        console.log(documents);
         return res.status(200).json({
           results: documents.length,
           paginationResult,
